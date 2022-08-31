@@ -11,7 +11,7 @@ width = 720
 cell_h = height / 10
 cell_w = width / 10
 
-tick_rate = 4
+tick_rate = 3
 
 pause = 0
 
@@ -137,7 +137,23 @@ while True :
             exit()
         
 
+        #Clics de souris
+        if event.type == pygame.MOUSEBUTTONDOWN :
+            if pause == 1 :
+                mouse_x = event.pos[0]
+                mouse_y = event.pos[1]
 
+                cell_col = int((mouse_x - (mouse_x % 72)) / 72)
+                cell_row = int((mouse_y - (mouse_y % 72)) / 72)
+
+                print("x : ",cell_col)
+                print("y : ",cell_row)
+
+                if table_n0[cell_row][cell_col] == 0 :
+                    table_n0[cell_row][cell_col] = 1
+                else :
+                    table_n0[cell_row][cell_col] = 0
+        
         
         #Touches de clavier
         if event.type == pygame.KEYDOWN :
@@ -160,9 +176,28 @@ while True :
                     print("pause")
                     pause = 1
 
+
+    #Reset de la fenetre
+    window.fill('white')
+            
+
+    #Dessin des cellules
+    for index_y, row in enumerate(table_n0) :
+        for index_x, cell in enumerate(row) :
+            if cell == 1 :
+                window.blit(black_surface, (index_x * cell_h, index_y * cell_w))
+
+
+    #Dessin des lignes horizontales
+    for i in range (0, int(width/cell_w)) :
+        pygame.draw.line(window,'grey', (0, i * cell_w), (height, i * cell_w), 2)
+
+    #Dessin des lignes verticales
+    for i in range (0, int(height/cell_h)) :
+        pygame.draw.line(window,'grey', (i * cell_h, 0), (i * cell_h, width), 2)
+
+
     if pause == 0 :
-        #Reset de la fenetre
-        window.fill('white')
 
         #Changement du tableau
         for index_y, row in enumerate(table_n0) :
@@ -174,25 +209,10 @@ while True :
         for i in range(len(table_n0)) :
             for j in range(len(table_n0[i])) :
                 table_n0[i][j] = table_n1[i][j]
-                
-
-        #Dessin des cellules
-        for index_y, row in enumerate(table_n0) :
-            for index_x, cell in enumerate(row) :
-                if cell == 1 :
-                    window.blit(black_surface, (index_x * cell_h, index_y * cell_w))
 
 
-        #Dessin des lignes horizontales
-        for i in range (0, int(width/cell_w)) :
-            pygame.draw.line(window,'grey', (0, i * cell_w), (height, i * cell_w), 2)
+    #Update de la fenetre
+    pygame.display.update()
 
-        #Dessin des lignes verticales
-        for i in range (0, int(height/cell_h)) :
-            pygame.draw.line(window,'grey', (i * cell_h, 0), (i * cell_h, width), 2)
-
-        #Update de la fenetre
-        pygame.display.update()
-
-
+    
     clock.tick(tick_rate)
